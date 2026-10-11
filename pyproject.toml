@@ -1,0 +1,20 @@
+[project]
+name = "log-off"
+version = "0.1.0"
+description = "Pick a real place near you, get a leave-by time, and log off. Local Gemma 4 via Ollama."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.143.0",
+    "httpx==0.28.1",
+    "pydantic==2.14.1",
+    "uvicorn[standard]==0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["backend"]
+testpaths = ["backend/tests"]

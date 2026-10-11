@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+
+# Local data (place cache, run logs; may contain rounded coordinates)
+data/cache/
+data/runs.jsonl
+
+# Secrets (none are needed, but never commit any)
+*credentials*
+*.env
+.env*
+*.key
+*.pem
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
