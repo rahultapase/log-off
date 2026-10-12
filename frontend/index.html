@@ -4,10 +4,250 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="description" content="Pick a real place near you, get a leave-by time, and log off." />
     <title>Log Off</title>
   </head>
   <body>
-    <div id="app"></div>
+    <a class="skip-link" href="#main">Skip to the planner</a>
+
+    <div class="shell" id="shell">
+      <header class="topbar">
+        <p class="wordmark">
+          <svg class="logo" viewBox="0 0 28 32" aria-hidden="true">
+            <rect class="logo-light" x="5" y="3" width="14" height="25.5" />
+            <path class="logo-spill" d="M12.5 28.5h6.5l6 3H11Z" />
+            <path class="logo-floor" d="M1 28.5h26" />
+            <path class="logo-frame" d="M4.5 28.5V2.5h15v26" />
+            <path class="logo-door" d="M4.5 2.5 12.5 5.2v25.8l-8-2.5Z" />
+            <circle class="logo-knob" cx="10.6" cy="17.4" r="1" />
+          </svg>
+          <span>Log Off</span>
+        </p>
+        <p class="model-status" id="model-status" role="status" aria-live="polite">
+          <span class="dot" aria-hidden="true"></span><span class="model-text">Checking Gemma</span>
+        </p>
+      </header>
+
+      <main id="main" tabindex="-1">
+        <!-- State 1: ask -->
+        <section class="ask" id="view-ask" aria-labelledby="ask-title">
+          <div class="ask-intro">
+            <h1 id="ask-title">Step away for a bit.</h1>
+            <p class="lede">One real place nearby, and when to leave.</p>
+
+            <aside class="daylight" id="daylight" aria-labelledby="daylight-title" hidden>
+              <h2 class="daylight-title" id="daylight-title">Today's light</h2>
+              <div class="daylight-arc" id="daylight-arc"></div>
+              <p class="daylight-left" id="daylight-left"></p>
+              <p class="daylight-meta" id="daylight-meta"></p>
+            </aside>
+          </div>
+
+          <form class="ask-form" id="ask-form" novalidate>
+            <div class="q q-location">
+              <p class="q-label" id="loc-label">Where are you?</p>
+              <div class="loc-controls">
+                <button type="button" class="btn btn-quiet" id="use-location">
+                  <svg class="icon" viewBox="0 0 20 20" aria-hidden="true">
+                    <circle cx="10" cy="10" r="3" />
+                    <path d="M10 1.5v3M10 15.5v3M1.5 10h3M15.5 10h3" />
+                    <circle cx="10" cy="10" r="6.5" />
+                  </svg>
+                  Use my location
+                </button>
+                <div class="area-field">
+                  <label for="area-input" class="visually-hidden">Type an area</label>
+                  <input
+                    id="area-input"
+                    name="area"
+                    type="text"
+                    inputmode="search"
+                    autocomplete="address-level2"
+                    placeholder="or type a neighbourhood and city"
+                    maxlength="120"
+                    aria-describedby="loc-status"
+                  />
+                  <button type="button" class="btn btn-quiet" id="set-area">Set area</button>
+                </div>
+              </div>
+              <p class="loc-status" id="loc-status" role="status" aria-live="polite"></p>
+            </div>
+
+            <fieldset class="q">
+              <legend class="q-label">How do you feel?</legend>
+              <div class="moods">
+                <label class="mood">
+                  <input type="radio" name="mood" value="calm" checked />
+                  <span class="opt">
+                    <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+                      <path d="M5 13c3.5-3 7.5-3 11 0s7.5 3 11 0M5 20c3.5-3 7.5-3 11 0s7.5 3 11 0" />
+                    </svg>
+                    <span class="opt-name">Calm</span>
+                    <span class="opt-hint">slow down</span>
+                  </span>
+                </label>
+                <label class="mood">
+                  <input type="radio" name="mood" value="curious" />
+                  <span class="opt">
+                    <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+                      <circle cx="14" cy="14" r="7.5" />
+                      <path d="m19.5 19.5 6.5 6.5" />
+                    </svg>
+                    <span class="opt-name">Curious</span>
+                    <span class="opt-hint">notice things</span>
+                  </span>
+                </label>
+                <label class="mood">
+                  <input type="radio" name="mood" value="restless" />
+                  <span class="opt">
+                    <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+                      <path d="m4 20 5-8 5 8 5-8 5 8 4-6" />
+                    </svg>
+                    <span class="opt-name">Restless</span>
+                    <span class="opt-hint">move it off</span>
+                  </span>
+                </label>
+                <label class="mood">
+                  <input type="radio" name="mood" value="social" />
+                  <span class="opt">
+                    <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+                      <circle cx="11.5" cy="16" r="6.5" />
+                      <circle cx="20.5" cy="16" r="6.5" />
+                    </svg>
+                    <span class="opt-name">Social</span>
+                    <span class="opt-hint">be near people</span>
+                  </span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="q">
+              <legend class="q-label">How long do you have?</legend>
+              <div class="track">
+                <span class="track-line" aria-hidden="true"><span class="track-fill"></span></span>
+                <label class="stop">
+                  <input type="radio" name="minutes" value="15" />
+                  <span class="stop-dot" aria-hidden="true"></span>
+                  <span class="stop-text"><b>15</b> min</span>
+                </label>
+                <label class="stop">
+                  <input type="radio" name="minutes" value="30" checked />
+                  <span class="stop-dot" aria-hidden="true"></span>
+                  <span class="stop-text"><b>30</b> min</span>
+                </label>
+                <label class="stop">
+                  <input type="radio" name="minutes" value="45" />
+                  <span class="stop-dot" aria-hidden="true"></span>
+                  <span class="stop-text"><b>45</b> min</span>
+                </label>
+                <label class="stop">
+                  <input type="radio" name="minutes" value="60" />
+                  <span class="stop-dot" aria-hidden="true"></span>
+                  <span class="stop-text"><b>1</b> hour</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="q-pair">
+              <fieldset class="q">
+                <legend class="q-label">Energy</legend>
+                <div class="chips">
+                  <label class="chip">
+                    <input type="radio" name="energy" value="low" />
+                    <span class="opt">
+                      <svg class="bars" viewBox="0 0 16 16" aria-hidden="true" data-level="1">
+                        <rect x="1" y="10" width="3" height="5" rx="1" />
+                        <rect x="6.5" y="6" width="3" height="9" rx="1" />
+                        <rect x="12" y="2" width="3" height="13" rx="1" />
+                      </svg>
+                      Low
+                    </span>
+                  </label>
+                  <label class="chip">
+                    <input type="radio" name="energy" value="medium" checked />
+                    <span class="opt">
+                      <svg class="bars" viewBox="0 0 16 16" aria-hidden="true" data-level="2">
+                        <rect x="1" y="10" width="3" height="5" rx="1" />
+                        <rect x="6.5" y="6" width="3" height="9" rx="1" />
+                        <rect x="12" y="2" width="3" height="13" rx="1" />
+                      </svg>
+                      Medium
+                    </span>
+                  </label>
+                  <label class="chip">
+                    <input type="radio" name="energy" value="high" />
+                    <span class="opt">
+                      <svg class="bars" viewBox="0 0 16 16" aria-hidden="true" data-level="3">
+                        <rect x="1" y="10" width="3" height="5" rx="1" />
+                        <rect x="6.5" y="6" width="3" height="9" rx="1" />
+                        <rect x="12" y="2" width="3" height="13" rx="1" />
+                      </svg>
+                      High
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset class="q">
+                <legend class="q-label">Going</legend>
+                <div class="chips">
+                  <label class="chip">
+                    <input type="radio" name="company" value="solo" checked />
+                    <span class="opt">
+                      <svg class="icon" viewBox="0 0 20 20" aria-hidden="true">
+                        <circle cx="10" cy="6.5" r="3" />
+                        <path d="M4.5 17a5.5 5.5 0 0 1 11 0" />
+                      </svg>
+                      Just me
+                    </span>
+                  </label>
+                  <label class="chip">
+                    <input type="radio" name="company" value="others" />
+                    <span class="opt">
+                      <svg class="icon" viewBox="0 0 20 20" aria-hidden="true">
+                        <circle cx="7" cy="7" r="2.6" />
+                        <circle cx="13.5" cy="7.5" r="2.3" />
+                        <path d="M2 17a5 5 0 0 1 10 0M11.5 13.2A4.5 4.5 0 0 1 18 17" />
+                      </svg>
+                      With others
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="submit-row">
+              <button type="submit" class="btn btn-primary btn-lg" id="find">
+                Find my way out
+                <svg class="icon icon-arrow" viewBox="0 0 20 20" aria-hidden="true">
+                  <path d="M4 10h11M11 5.5 15.5 10 11 14.5" />
+                </svg>
+              </button>
+              <p class="form-error" id="form-error" role="alert"></p>
+            </div>
+          </form>
+        </section>
+
+        <!-- State 2: loading + ticket (rendered by main.ts) -->
+        <section class="result" id="view-result" aria-labelledby="result-title" hidden>
+          <h2 class="visually-hidden" id="result-title">Your way out</h2>
+          <div id="result-body"></div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>
+          Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>
+          (ODbL). Weather data by <a href="https://open-meteo.com/">Open-Meteo</a> (CC BY 4.0).
+          Activities by Gemma, running on this computer.
+        </p>
+      </footer>
+    </div>
+
+    <!-- State 3: logged off (rendered by main.ts) -->
+    <section class="gone" id="view-gone" aria-labelledby="gone-title" hidden tabindex="-1"></section>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

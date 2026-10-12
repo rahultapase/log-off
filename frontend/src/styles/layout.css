@@ -1,0 +1,102 @@
+/* ---------- shell: full width, content sits left ---------- */
+
+.shell {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100dvh;
+  max-width: 96rem;
+  margin: 0 auto;
+  padding: 0 clamp(1.25rem, 3.5vw, 3.5rem);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4) 0;
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--text-lg);
+  font-weight: 760;
+  letter-spacing: -0.02em;
+}
+
+/* The mark: a door left open, with the outside (green) showing through the gap. */
+.logo {
+  width: 1.6rem;
+  height: 1.85rem;
+  flex: none;
+  overflow: visible;
+}
+
+.logo-light {
+  fill: var(--grass);
+}
+
+.logo-spill {
+  fill: var(--grass);
+  opacity: 0.35;
+}
+
+.logo-frame {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+}
+
+.logo-floor {
+  stroke: var(--line-strong);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+}
+
+.logo-door {
+  fill: var(--rose);
+}
+
+.logo-knob {
+  fill: var(--ink);
+}
+
+.model-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.model-status .dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.model-status[data-state='ok'] .dot {
+  background: var(--grass);
+}
+
+.model-status[data-state='warn'] .dot {
+  background: var(--danger);
+}
+
+main {
+  outline: none;
+}
+
+.footer {
+  padding: var(--s-4) 0;
+  font-size: var(--text-xs);
+  color: var(--faint);
+}
+
+.footer p {
+  max-width: 80ch;
+}

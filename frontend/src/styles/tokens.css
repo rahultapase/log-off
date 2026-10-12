@@ -1,0 +1,66 @@
+/* Log Off design tokens.
+   Scene: a laptop late in the afternoon, tired eyes, room lights maybe off. Dark, quiet surface;
+   the rose seed (hue 340, from impeccable palette.mjs) carries the one action, a grass green
+   marks "outside". Pure neutral surfaces (chroma 0) so the mood lives in the two brand colours. */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: oklch(0.115 0 0);
+  --surface: oklch(0.17 0 0);
+  --surface-2: oklch(0.215 0 0);
+  --line: oklch(0.32 0 0);
+  --line-strong: oklch(0.46 0 0);
+
+  /* Text (all >= 4.5:1 on --surface-2) */
+  --ink: oklch(0.95 0 0);
+  --muted: oklch(0.76 0.008 345);
+  --faint: oklch(0.66 0.006 345);
+
+  /* Brand */
+  --rose: oklch(0.54 0.19 345); /* filled primary button, white text 5:1 */
+  --rose-hover: oklch(0.49 0.18 345); /* darker on hover keeps white text above 4.5:1 */
+  --rose-ink: oklch(0.82 0.1 345); /* rose as text on dark */
+  --rose-wash: oklch(0.27 0.07 345); /* selected segment fill */
+  --grass: oklch(0.86 0.13 150); /* outside / back-by, focus ring */
+  --grass-ink: oklch(0.3 0.08 150);
+  --danger: oklch(0.8 0.12 25);
+  --danger-wash: oklch(0.25 0.06 25);
+
+  /* Type */
+  --font-ui: 'Schibsted Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-num: 'Martian Mono Variable', ui-monospace, 'Cascadia Mono', monospace;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.625rem;
+  --text-2xl: 2.25rem;
+  --text-3xl: 3.25rem;
+
+  /* Space (4px base) */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-5: 1.5rem;
+  --s-6: 2rem;
+  --s-7: 3rem;
+  --s-8: 4.5rem;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 16px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dur-press: 140ms;
+  --dur-ui: 200ms;
+  --dur-enter: 280ms;
+
+  /* Layers */
+  --z-base: 0;
+  --z-sticky: 10;
+  --z-overlay: 40;
+}

@@ -1,0 +1,531 @@
+/* ---------- ask: intro + daylight on the left, questions on the right ---------- */
+
+.ask {
+  display: grid;
+  grid-template-columns: minmax(17rem, 24rem) minmax(0, 46rem);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: start;
+  padding: var(--s-4) 0 var(--s-4);
+}
+
+.ask-intro {
+  position: sticky;
+  top: var(--s-5);
+}
+
+.ask h1 {
+  font-size: var(--text-3xl);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+
+.lede {
+  margin-top: var(--s-3);
+  max-width: 24ch;
+  font-size: var(--text-lg);
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* daylight panel */
+
+.daylight {
+  margin-top: var(--s-6);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--line);
+  animation: fade-in var(--dur-enter) var(--ease-out) both;
+}
+
+.daylight-title {
+  font-size: var(--text-sm);
+  font-weight: 560;
+  color: var(--muted);
+}
+
+.daylight-arc {
+  margin-top: var(--s-3);
+}
+
+.sun-arc {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  height: auto;
+  overflow: visible;
+}
+
+.arc-todo {
+  fill: none;
+  stroke: var(--faint);
+  stroke-width: 1.5;
+  stroke-dasharray: 1 6;
+  stroke-linecap: round;
+}
+
+.arc-done {
+  fill: none;
+  stroke: var(--rose-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.horizon {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.arc-end {
+  fill: var(--bg);
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+}
+
+.sun {
+  fill: var(--rose-ink);
+}
+
+.sun-halo {
+  fill: var(--rose-ink);
+  opacity: 0.16;
+}
+
+.arc-label {
+  fill: var(--muted);
+  font-family: var(--font-num);
+  font-size: 10px;
+}
+
+.daylight-left {
+  margin-top: var(--s-3);
+  font-size: var(--text-lg);
+}
+
+.daylight-left .dur {
+  color: var(--grass);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.daylight-meta {
+  margin-top: var(--s-2);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ---------- questions ---------- */
+
+.ask-form {
+  display: grid;
+  gap: var(--s-5);
+}
+
+.q-label {
+  display: block;
+  margin-bottom: var(--s-2);
+  font-size: var(--text-sm);
+  font-weight: 580;
+  color: var(--muted);
+}
+
+.q input[type='radio'] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* location */
+
+.loc-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.area-field {
+  display: flex;
+  flex: 1 1 18rem;
+  gap: var(--s-2);
+}
+
+.area-field input {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0 var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-size: var(--text-sm);
+  transition: border-color var(--dur-ui) var(--ease-out);
+}
+
+.area-field input::placeholder {
+  color: var(--faint);
+}
+
+.area-field input:hover {
+  border-color: var(--line-strong);
+}
+
+.area-field input:focus-visible {
+  outline: 3px solid var(--grass);
+  outline-offset: 2px;
+  border-color: var(--line-strong);
+}
+
+.loc-status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  font-size: var(--text-sm);
+  color: var(--muted);
+}
+
+.loc-status:empty {
+  display: none;
+}
+
+.loc-status strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.loc-status .icon {
+  margin-top: 0.15em;
+}
+
+.loc-status[data-state='ok'] .icon {
+  color: var(--grass);
+}
+
+.loc-status[data-state='error'] {
+  color: var(--danger);
+}
+
+/* shared option behaviour */
+
+.opt {
+  transition:
+    background-color var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out),
+    color var(--dur-ui) var(--ease-out),
+    transform var(--dur-press) var(--ease-out);
+}
+
+.mood,
+.chip,
+.stop {
+  position: relative;
+  display: block;
+}
+
+.mood:active .opt,
+.chip:active .opt {
+  transform: scale(0.97);
+}
+
+/* mood tiles */
+
+.moods {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.mood .opt {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+  min-height: 5.75rem;
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.glyph {
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-bottom: var(--s-2);
+  fill: none;
+  stroke: var(--muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--dur-ui) var(--ease-out);
+}
+
+.opt-name {
+  font-weight: 600;
+}
+
+.opt-hint {
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.mood:hover .opt {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+}
+
+.mood input:checked + .opt {
+  background: var(--rose-wash);
+  border-color: oklch(0.82 0.1 345 / 0.6);
+}
+
+.mood input:checked + .opt .glyph {
+  stroke: var(--rose-ink);
+}
+
+.mood input:checked + .opt .opt-hint {
+  color: var(--ink);
+}
+
+.mood input:focus-visible + .opt,
+.chip input:focus-visible + .opt {
+  outline: 3px solid var(--grass);
+  outline-offset: 2px;
+}
+
+/* time: stops along a track */
+
+.track {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 34rem;
+}
+
+.track-line {
+  position: absolute;
+  top: 11px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: var(--line);
+  border-radius: 1px;
+}
+
+.track-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--rose-ink);
+  border-radius: 1px;
+  transform-origin: left center;
+  transform: scaleX(var(--fill, 0.3333));
+  transition: transform 260ms var(--ease-out);
+}
+
+.track:has(input[value='15']:checked) {
+  --fill: 0;
+}
+
+.track:has(input[value='30']:checked) {
+  --fill: 0.3333;
+}
+
+.track:has(input[value='45']:checked) {
+  --fill: 0.6667;
+}
+
+.track:has(input[value='60']:checked) {
+  --fill: 1;
+}
+
+.stop {
+  display: grid;
+  justify-items: center;
+  gap: var(--s-2);
+  padding-bottom: var(--s-1);
+}
+
+.stop-dot {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--line-strong);
+  transition:
+    background-color var(--dur-ui) var(--ease-out),
+    border-color var(--dur-ui) var(--ease-out),
+    box-shadow var(--dur-ui) var(--ease-out),
+    transform var(--dur-ui) var(--ease-out);
+}
+
+.stop:hover .stop-dot {
+  border-color: var(--ink);
+}
+
+.stop:has(~ .stop input:checked) .stop-dot {
+  border-color: var(--rose-ink);
+  background: var(--rose-ink);
+  transform: scale(0.6);
+}
+
+.stop input:checked + .stop-dot {
+  border-color: var(--rose-ink);
+  background: var(--rose);
+  box-shadow: 0 0 0 6px var(--rose-wash);
+}
+
+.stop input:focus-visible + .stop-dot {
+  outline: 3px solid var(--grass);
+  outline-offset: 6px;
+}
+
+.stop-text {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  transition: color var(--dur-ui) var(--ease-out);
+}
+
+.stop-text b {
+  font-family: var(--font-num);
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.stop input:checked ~ .stop-text {
+  color: var(--ink);
+}
+
+/* energy + company chips */
+
+.q-pair {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: start;
+  gap: var(--s-7);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.chip .opt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 2.75rem;
+  padding: 0 var(--s-4) 0 0.875rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: var(--text-sm);
+  font-weight: 560;
+  color: var(--muted);
+}
+
+.chip:hover .opt {
+  background: var(--surface-2);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.chip input:checked + .opt {
+  background: var(--rose-wash);
+  border-color: oklch(0.82 0.1 345 / 0.6);
+  color: var(--ink);
+}
+
+.chip input:checked + .opt .icon {
+  color: var(--rose-ink);
+}
+
+.bars {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+
+.bars rect {
+  fill: var(--line-strong);
+  transition: fill var(--dur-ui) var(--ease-out);
+}
+
+.bars[data-level='1'] rect:nth-child(-n + 1),
+.bars[data-level='2'] rect:nth-child(-n + 2),
+.bars[data-level='3'] rect {
+  fill: var(--muted);
+}
+
+.chip input:checked + .opt .bars[data-level='1'] rect:nth-child(-n + 1),
+.chip input:checked + .opt .bars[data-level='2'] rect:nth-child(-n + 2),
+.chip input:checked + .opt .bars[data-level='3'] rect {
+  fill: var(--rose-ink);
+}
+
+/* submit */
+
+.submit-row {
+  padding-top: var(--s-1);
+}
+
+.form-error {
+  margin-top: var(--s-3);
+  font-size: var(--text-sm);
+  color: var(--danger);
+}
+
+.form-error:empty {
+  display: none;
+}
+
+/* ---------- narrower windows ---------- */
+
+@media (max-width: 60rem) {
+  .ask {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+
+  .ask-intro {
+    position: static;
+  }
+
+  .daylight {
+    margin-top: var(--s-5);
+  }
+
+  .moods {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .q-pair {
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track-fill,
+  .opt,
+  .stop-dot {
+    transition-property: background-color, border-color, color, box-shadow;
+  }
+
+  .track-fill {
+    transition: none;
+  }
+
+  .mood:active .opt,
+  .chip:active .opt {
+    transform: none;
+  }
+
+  .daylight {
+    animation-name: fade-in;
+  }
+}
