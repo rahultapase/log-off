@@ -10,7 +10,7 @@
   --surface: oklch(0.17 0 0);
   --surface-2: oklch(0.215 0 0);
   --line: oklch(0.32 0 0);
-  --line-strong: oklch(0.46 0 0);
+  --line-strong: oklch(0.52 0 0); /* >= 3:1 on --bg: unselected stops and input borders */
 
   /* Text (all >= 4.5:1 on --surface-2; muted ~10:1, faint ~7:1, raised a step for small type) */
   --ink: oklch(0.95 0 0);

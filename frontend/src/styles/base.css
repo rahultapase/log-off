@@ -93,7 +93,10 @@ a {
   left: var(--s-4);
   top: var(--s-4);
   z-index: var(--z-overlay);
-  padding: var(--s-2) var(--s-4);
+  display: flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--s-4);
   background: var(--ink);
   color: var(--bg);
   border-radius: var(--radius-sm);
