@@ -7,7 +7,7 @@ import './styles/app.css'
 import './styles/ask.css'
 
 import { api, ApiError, type Area, type Prefs, type Prepared, type Ticket } from './api'
-import { compassSvg, icon, sunArcSvg } from './icons'
+import { compassSvg, icon, sunArcSvg, weatherIconName } from './icons'
 
 // ---------- tiny helpers ----------
 
@@ -44,6 +44,7 @@ let lastPrefs: Prefs | null = null
 let excluded: string[] = []
 let busy = false
 let goneTimer: number | undefined
+let countdownTimer: number | undefined
 
 function loadJSON<T>(key: string): T | null {
   try {
@@ -298,6 +299,7 @@ function step(id: (typeof STEPS)[number], state: StepState, fact = '') {
 }
 
 function show(view: 'ask' | 'result') {
+  window.clearInterval(countdownTimer)
   viewAsk.hidden = view !== 'ask'
   viewResult.hidden = view !== 'result'
 }
@@ -349,10 +351,58 @@ function renderError(msg: string) {
   resultBody.querySelector<HTMLButtonElement>('[data-act="change"]')!.focus()
 }
 
+/** "in 12 min" / "in 1 h 5 min" / "now", rounded up so it matches the minute shown on the clock. */
+function untilText(ms: number): string {
+  const mins = Math.ceil(ms / 60_000)
+  if (mins <= 0) return 'now'
+  const h = Math.floor(mins / 60)
+  const m = mins % 60
+  return h ? `in ${h} h ${m} min` : `in ${m} min`
+}
+
+/** Keep the "leave in N min" label on the ticket current. With ?at= it counts from the mocked clock. */
+function startCountdown(t: Ticket) {
+  window.clearInterval(countdownTimer)
+  const el = document.querySelector<HTMLElement>('#leave-countdown')
+  if (!el) return
+  const leaveAt = Date.parse(t.leave_by)
+  if (Number.isNaN(leaveAt)) return
+  const skew = mockAt ? Date.parse(t.now) - Date.now() : 0
+  const update = () => {
+    const left = leaveAt - (Date.now() + (Number.isNaN(skew) ? 0 : skew))
+    el.textContent = untilText(left)
+    if (left <= 0) window.clearInterval(countdownTimer)
+  }
+  update()
+  countdownTimer = window.setInterval(update, 15_000)
+}
+
+/** "Clear sky, 32°C, feels like 36°C" -> parts; null when the line has another shape. */
+function weatherParts(line: string): { desc: string; temp: string; feels: string | null } | null {
+  const m = line.match(/^(.*?),\s*(-?\d+)\u00b0C(?:,\s*feels like\s*(-?\d+)\u00b0C)?$/i)
+  return m ? { desc: m[1], temp: m[2], feels: m[3] ?? null } : null
+}
+
+function weatherMarkup(line: string): string {
+  const w = weatherParts(line)
+  if (!w) return `<p class="weather"><span class="visually-hidden">Now: </span>${esc(line)}</p>`
+  return `
+    <div class="weather">
+      ${icon(weatherIconName(w.desc)).replace('class="icon"', 'class="icon wx-icon"')}
+      <span class="wx-temp num"><span class="visually-hidden">Now: </span>${w.temp}\u00b0C</span>
+      <span class="wx-text">
+        <span>${esc(w.desc.charAt(0).toUpperCase() + w.desc.slice(1))}</span>
+        ${w.feels ? `<span class="wx-feels">feels ${w.feels}\u00b0</span>` : ''}
+      </span>
+    </div>`
+}
+
 function renderTicket(t: Ticket) {
   const later = t.mode === 'later'
   const leaveLabel = later ? 'Leave at' : 'Leave by'
-  const notes = t.notes.filter(Boolean)
+  // In "now" mode the daylight note moves into the stub as structured data instead of a bar.
+  const daylightInStub = t.mode === 'now' && !!t.sunset_text && !!t.latest_leave_text
+  const notes = t.notes.filter(Boolean).filter((n) => !(daylightInStub && n.startsWith('Daylight until')))
   const kind = t.place.named ? t.place.kind_word : `${t.place.kind_word} with no name on the map`
   const placeKind = `${kind.charAt(0).toUpperCase()}${kind.slice(1)} in`
   resultBody.innerHTML = `
@@ -377,10 +427,15 @@ function renderTicket(t: Ticket) {
           <p><span class="num">${t.place.walk_min} min</span><span class="dir">walk ${esc(t.place.direction)}</span></p>
         </div>
         <dl class="times">
-          <div><dt>${leaveLabel}</dt><dd class="num">${esc(t.leave_by_text)}</dd></div>
+          <div><dt>${leaveLabel}<span class="countdown" id="leave-countdown"></span></dt><dd class="num">${esc(t.leave_by_text)}</dd></div>
           <div><dt>Back by</dt><dd class="num num-back">${esc(t.back_by_text)}</dd></div>
         </dl>
-        <p class="weather">Now: ${esc(t.weather)}</p>
+        ${
+          daylightInStub
+            ? `<p class="daylight-note">${icon('sun')}<span>Daylight until ${esc(t.sunset_text!)}. Leave by <b>${esc(t.latest_leave_text!)}</b> at the latest.</span></p>`
+            : ''
+        }
+        ${weatherMarkup(t.weather)}
       </div>
     </article>
     ${
@@ -389,15 +444,16 @@ function renderTicket(t: Ticket) {
         : ''
     }
     <div class="actions">
-      <button type="button" class="btn btn-quiet" data-act="change">${icon('back')}Change my answers</button>
+      <button type="button" class="btn btn-text" data-act="change">${icon('back')}Change my answers</button>
       <button type="button" class="btn btn-secondary" data-act="another">Another place</button>
       <button type="button" class="btn btn-primary btn-lg" data-act="logoff">${later ? 'Log off until then' : 'Log off'}</button>
     </div>
-    <p class="source-line">${
+    ${
       t.source === 'gemma'
-        ? `Activity written by ${esc(t.model ?? 'Gemma')} on this computer, checked against the map before you saw it.`
-        : 'Activity from a built-in template (Gemma was off or its answers failed the checks).'
-    }</p>`
+        ? ''
+        : '<p class="source-line">Activity from a built-in template (Gemma was off or its answers failed the checks).</p>'
+    }`
+  startCountdown(t)
   resultBody.querySelector<HTMLButtonElement>('[data-act="logoff"]')!.focus({ preventScroll: true })
 }
 
@@ -438,6 +494,7 @@ function logOff(t: Ticket) {
     title: t.title,
   }
   localStorage.setItem(GONE_KEY, JSON.stringify(gone))
+  window.clearInterval(countdownTimer)
   showGone(gone)
 }
 

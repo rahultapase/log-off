@@ -95,8 +95,9 @@ main {
   padding: var(--s-4) 0;
   font-size: var(--text-xs);
   color: var(--faint);
+  text-align: center;
 }
 
 .footer p {
-  max-width: 80ch;
+  max-width: none;
 }

@@ -12,10 +12,10 @@
   --line: oklch(0.32 0 0);
   --line-strong: oklch(0.46 0 0);
 
-  /* Text (all >= 4.5:1 on --surface-2) */
+  /* Text (all >= 4.5:1 on --surface-2; muted ~10:1, faint ~7:1, raised a step for small type) */
   --ink: oklch(0.95 0 0);
-  --muted: oklch(0.76 0.008 345);
-  --faint: oklch(0.66 0.006 345);
+  --muted: oklch(0.81 0.008 345);
+  --faint: oklch(0.73 0.006 345);
 
   /* Brand */
   --rose: oklch(0.54 0.19 345); /* filled primary button, white text 5:1 */
@@ -30,7 +30,7 @@
   /* Type */
   --font-ui: 'Schibsted Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
   --font-num: 'Martian Mono Variable', ui-monospace, 'Cascadia Mono', monospace;
-  --text-xs: 0.8125rem;
+  --text-xs: 0.875rem;
   --text-sm: 0.9375rem;
   --text-md: 1.0625rem;
   --text-lg: 1.25rem;
