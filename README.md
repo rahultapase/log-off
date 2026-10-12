@@ -1,4 +1,4 @@
-# Log Off
+# <img src="frontend/public/favicon.svg" height="40" align="absmiddle" alt="Log Off logo"> Log Off
 
 Log Off turns a few preferences into one short reason to leave the screen. Pick a mood, the time
 available, your energy, and whether you are alone. The app finds a real nearby place, works out a
