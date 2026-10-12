@@ -58,7 +58,7 @@ def test_daytime_goes_now():
     assert w.leave_by == at(16, 5)
     assert w.back_by == at(16, 35)
     assert w.latest_leave == at(17, 37)  # 18:12 - 30 - 5
-    assert "6:12 PM" in w.note
+    assert "6:12 PM" in w.note and "5:37 PM at the latest" in w.note
 
 
 def test_just_before_latest_leave_still_now():

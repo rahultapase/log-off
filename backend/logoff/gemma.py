@@ -14,6 +14,15 @@ from .models import Candidate, GemmaPick, Prefs, TimeWindow
 OLLAMA_URL = os.environ.get("LOGOFF_OLLAMA_URL", "http://127.0.0.1:11434")
 MODEL = os.environ.get("LOGOFF_MODEL", "gemma4:e2b")
 TIMEOUT_S = 120
+KEEP_ALIVE = "30m"  # Ollama's default 5 min unload made the next ticket take ~20 s
+
+
+async def warm(client: httpx.AsyncClient) -> None:
+    """Load the model in the background (an empty generate request loads it)."""
+    try:
+        await client.post(f"{OLLAMA_URL}/api/generate", json={"model": MODEL, "keep_alive": KEEP_ALIVE}, timeout=TIMEOUT_S)
+    except httpx.HTTPError:
+        pass
 
 SYSTEM = """You help someone stop scrolling and go outside for a short while.
 You get their mood, energy, company, the weather, and a numbered list of real places near them.
@@ -75,7 +84,8 @@ def user_prompt(prefs: Prefs, weather_line: str, window: TimeWindow | None, cand
     ]
     if window is not None:
         if window.mode == "after_dark":
-            lines.append("It will be dark outside. Keep it simple and stay together in busy, lit areas.")
+            # Don't describe the places as lit or busy: Gemma repeats that as if it were a fact.
+            lines.append("It will be dark outside. Keep it simple and stay together as a group.")
         elif window.mode == "later":
             lines.append("This is for early morning, just after sunrise.")
         if window.rain_risk:
@@ -107,6 +117,7 @@ async def chat(client: httpx.AsyncClient, msgs: list[dict]) -> tuple[str, float]
         "messages": msgs,
         "stream": False,
         "think": False,
+        "keep_alive": KEEP_ALIVE,
         "format": schema(),
         # num_predict caps a runaway answer (gemma3:1b once wrote 6.8k chars in 45 s).
         "options": {"temperature": 0.7, "num_ctx": 4096, "num_predict": 400},

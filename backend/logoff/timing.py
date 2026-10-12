@@ -62,7 +62,7 @@ def plan_window(now: datetime, outing_min: int, weather: Weather | None, company
 
     if sunrise <= leave <= latest:
         mode = "now"
-        notes.append(f"Daylight until {fmt_time(sunset)}.")
+        notes.append(f"Daylight until {fmt_time(sunset)}, so leave by {fmt_time(latest)} at the latest.")
     elif company == "others":
         mode = "after_dark"
         notes.append("It will be dark, so this sticks to named, busy places. Stay together.")
